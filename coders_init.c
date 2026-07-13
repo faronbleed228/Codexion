@@ -1,43 +1,73 @@
 #include "codexion.h"
 
-t_dongle	*dongle_coder(t_parsing *pars_struct, t_dongle *left_dongle)
+t_dongle	**dongle_init(int coders_n)
 {
-	t_coder		*new_coder;
-	t_dongle	*right_dongle;
-	int			id;
+	int			i;
+	t_dongle	**dongle_array;
 
-	id = 2;
-	while (id <= pars_struct->coders)
+	i = 1;
+	dongle_array = malloc(sizeof(t_dongle *) * coders_n);
+	if (!dongle_array)
+		return (NULL);
+	while (i <= coders_n)
 	{
-		right_dongle = ft_new_dongle(id);
-		if (!right_dongle)
+		dongle_array[i - 1] = ft_new_dongle(i);
+		if (!dongle_array[i - 1])
 			return (NULL);
-		new_coder = ft_new_coder(id);
-		if (!new_coder)
-			return (NULL);
-		new_coder->left_dongle = left_dongle;
-		new_coder->right_dongle = right_dongle;
-		left_dongle = right_dongle;
-		id++;
+		i++;
 	}
-	return (left_dongle);
+	return (dongle_array);
 }
 
-t_coder	*coders_init(t_parsing *pars_struct)
+void	dongle_to_coders(t_dongle **dongle_array, t_coder **coder_array,
+		int coder_n)
 {
-	t_coder		*middle_coder;
-	t_coder		*first_coder;
-	t_dongle	*first_d;
-	t_dongle	*last_dongle;
+	int	i;
 
-	first_d = ft_new_dongle(1);
-	if (!first_d)
+	i = 1;
+	coder_array[0]->right_dongle = dongle_array[0];
+	coder_array[0]->left_dongle = dongle_array[coder_n - 1];
+	while (i < coder_n)
+	{
+		coder_array[i]->left_dongle = coder_array[i - 1]->right_dongle;
+		coder_array[i]->right_dongle = dongle_array[i];
+		i++;
+	}
+	free(dongle_array);
+}
+t_coder	**coders_array(int coders_n)
+{
+	t_coder	**coder_array;
+	t_coder	*coder;
+	int		i;
+
+	coder_array = malloc(sizeof(t_coder *) * coders_n);
+	if (!coder_array)
 		return (NULL);
-	first_coder = ft_new_coder(1);
-	if (!first_coder)
+	i = 1;
+	while (i <= coders_n)
+	{
+		coder_array[i - 1] = ft_new_coder(i);
+		if (!coder_array[i - 1])
+			return (NULL);
+		i++;
+	}
+	return (coder_array);
+}
+
+t_simulation	*simulation_init(t_parsing *pars_struct)
+{
+	t_simulation	*sim_struct;
+
+	sim_struct = malloc(sizeof(t_simulation));
+	if (!sim_struct)
 		return (NULL);
-	first_coder->right_dongle = first_d;
-	last_dongle = dongle_coder(pars_struct, first_d);
-	first_coder->left_dongle = last_dongle;
-	return (first_coder);
+	sim_struct->coder_array = coders_array(pars_struct->coders);
+	sim_struct->dongle_array = dongle_init(pars_struct->coders);
+	if (!sim_struct->coder_array | !sim_struct->dongle_array)
+		return (NULL);
+	sim_struct->start_time = pars_struct->start_time;
+	dongle_to_coders(sim_struct->dongle_array, sim_struct->coder_array,
+		pars_struct->coders);
+	return (sim_struct);
 }

@@ -32,21 +32,29 @@ typedef struct s_coder
 	status		cur_status;
 
 }				t_coder;
+
 typedef struct s_parsing
 {
 	int			coders;
-	int			t_to_burn;
-	int			t_to_copm;
-	int			t_to_debug;
-	int			t_to_refac;
+	long		t_to_burn;
+	long		t_to_copm;
+	long		t_to_debug;
+	long		t_to_refac;
 	int			copm_req;
-	int			cooldown;
+	long		cooldown;
 	char		*scheduler;
 	long		start_time;
 }				t_parsing;
 
+typedef struct s_simulation
+{
+	t_coder		**coder_array;
+	t_dongle	**dongle_array;
+	long		start_time;
+}				t_simulation;
+
 t_parsing		*parsing(char **argv);
-t_coder			*coders_init(t_parsing *pars_struct);
+t_simulation	*simulation_init(t_parsing *pars_struct);
 
 int				ft_isdigit(int c);
 long			get_cur_time_ns(struct timeval tv);
