@@ -7,7 +7,7 @@ int	ft_isdigit(int c)
 	return (0);
 }
 
-long	get_cur_time_ns(struct timeval tv)
+long long	get_cur_time_ns(struct timeval tv)
 {
 	long	time_ms;
 

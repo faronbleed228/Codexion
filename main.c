@@ -1,13 +1,12 @@
 #include "codexion.h"
 
-void	coders_print(t_coder *coder);
+void	coders_print(t_coder coder);
 void	parsing_print(t_parsing *pars_struct);
 
 int	main(int argc, char **argv)
 {
 	t_parsing		*pars_struct;
 	int				i;
-	t_coder			**coders;
 	t_simulation	*sim_struct;
 
 	if (argc != 9)
@@ -35,16 +34,23 @@ int	main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
+	if (simulation_start(sim_struct) != 0)
+	{
+		ft_end_thread(pars_struct->coders, sim_struct);
+		free_mutex(sim_struct, pars_struct->coders);
+		free_cond(sim_struct, pars_struct->coders);
+		free_sim(sim_struct);
+	}
 }
 
-void	coders_print(t_coder *coder)
+void	coders_print(t_coder coder)
 {
-	printf("Coder NUMBER:%i\n", coder->cod_num);
-	printf("Current status: %i\n", coder->cur_status);
-	printf("Last comp time: %li\n", coder->last_comp_time);
-	printf("Left dongle Id: %i\n", coder->left_dongle->dongle_id);
-	printf("Right dongle id: %i\n", coder->right_dongle->dongle_id);
-	printf("Number of compiles: %i\n", coder->n_compiles);
+	printf("Coder NUMBER:%i\n", coder.cod_num);
+	printf("Current status: %i\n", coder.cur_status);
+	printf("Last comp time: %li\n", coder.last_comp_time);
+	printf("Left dongle Id: %i\n", coder.left_dongle->dongle_id);
+	printf("Right dongle id: %i\n", coder.right_dongle->dongle_id);
+	printf("Number of compiles: %i\n", coder.n_compiles);
 }
 
 void	parsing_print(t_parsing *pars_struct)
