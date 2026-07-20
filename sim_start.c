@@ -30,7 +30,33 @@ static int	mutex_cond_init(t_simulation *sim_struct)
 
 void	*coder_routine(void *coder)
 {
-	return (0);
+	t_coder	*cur_coder;
+	int		i;
+
+	i = 0;
+	cur_coder = coder;
+	while (i < 4)
+	{
+		if (cur_coder->cod_num % 2 == 0)
+		{
+			take_dongle(cur_coder, cur_coder->left_dongle);
+			take_dongle(cur_coder, cur_coder->right_dongle);
+		}
+		else if (cur_coder->cod_num % 2 != 0)
+		{
+			take_dongle(cur_coder, cur_coder->right_dongle);
+			take_dongle(cur_coder, cur_coder->left_dongle);
+		}
+		log_output(cur_coder, COMPILING);
+		usleep(cur_coder->sim_struct->pars_struct->t_to_copm);
+		leave_dongle(cur_coder->left_dongle);
+		leave_dongle(cur_coder->right_dongle);
+		log_output(cur_coder, DEBUGGING);
+		usleep(cur_coder->sim_struct->pars_struct->t_to_debug);
+		log_output(cur_coder, REFACTORING);
+		usleep(cur_coder->sim_struct->pars_struct->t_to_refac);
+		i++;
+	}
 }
 
 static int	thread_init(t_simulation *sim_struct)

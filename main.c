@@ -34,19 +34,24 @@ int	main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
-	if (simulation_start(sim_struct) != 0)
+	if (simulation_start(sim_struct) == 0)
 	{
+		join_threads(sim_struct, sim_struct->free_struct);
 		free_everything(sim_struct, sim_struct->free_struct);
 	}
 	else
+	{
+		join_threads(sim_struct, sim_struct->free_struct);
+		printf("%i\n", sim_struct->pars_struct->copm_req);
 		free_everything(sim_struct, sim_struct->free_struct);
+	}
 }
 
 void	coders_print(t_coder coder)
 {
 	printf("Coder NUMBER:%i\n", coder.cod_num);
 	printf("Current status: %i\n", coder.cur_status);
-	printf("Last comp time: %li\n", coder.last_comp_time);
+	printf("Last comp time: %lli\n", coder.last_comp_time);
 	printf("Left dongle Id: %i\n", coder.left_dongle->dongle_id);
 	printf("Right dongle id: %i\n", coder.right_dongle->dongle_id);
 	printf("Number of compiles: %i\n", coder.n_compiles);
@@ -55,11 +60,11 @@ void	coders_print(t_coder coder)
 void	parsing_print(t_parsing *pars_struct)
 {
 	printf("Number of coders: %i\n", pars_struct->coders);
-	printf("Time to burn: %li\n", pars_struct->t_to_burn);
-	printf("Time to compile: %li\n", pars_struct->t_to_copm);
-	printf("Time to debug: %li\n", pars_struct->t_to_debug);
-	printf("Time to refactor: %li\n", pars_struct->t_to_refac);
-	printf("Comp required: %li\n", pars_struct->copm_req);
-	printf("Cooldown time: %li\n", pars_struct->cooldown);
+	printf("Time to burn: %lli\n", pars_struct->t_to_burn);
+	printf("Time to compile: %lli\n", pars_struct->t_to_copm);
+	printf("Time to debug: %lli\n", pars_struct->t_to_debug);
+	printf("Time to refactor: %lli\n", pars_struct->t_to_refac);
+	printf("Comp required: %i\n", pars_struct->copm_req);
+	printf("Cooldown time: %lli\n", pars_struct->cooldown);
 	printf("Scheduler: %s\n\n", pars_struct->scheduler);
 }

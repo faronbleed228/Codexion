@@ -32,7 +32,7 @@ static void	dongle_to_coders(t_dongle *dongle_array, t_coder *coder_array,
 		i++;
 	}
 }
-static t_coder	*coders_array(int coders_n)
+static t_coder	*coders_array(int coders_n, t_simulation *sim_struct)
 {
 	t_coder	*coder_array;
 	t_coder	*coder;
@@ -44,7 +44,7 @@ static t_coder	*coders_array(int coders_n)
 	i = 1;
 	while (i <= coders_n)
 	{
-		coder_array[i - 1] = ft_new_coder(i);
+		coder_array[i - 1] = ft_new_coder(i, sim_struct);
 		i++;
 	}
 	return (coder_array);
@@ -73,7 +73,7 @@ t_simulation	*simulation_init(t_parsing *pars_struct)
 		return (NULL);
 	}
 	sim_struct->free_struct = free_init();
-	sim_struct->coder_array = coders_array(pars_struct->coders);
+	sim_struct->coder_array = coders_array(pars_struct->coders, sim_struct);
 	sim_struct->dongle_array = dongle_init(pars_struct->coders);
 	sim_struct->pars_struct = pars_struct;
 	if (!sim_struct->coder_array | !sim_struct->dongle_array | !sim_struct->free_struct)
