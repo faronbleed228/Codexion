@@ -60,6 +60,7 @@ t_free	*free_init(void)
 	free_struct->cond = 0;
 	free_struct->mutex = 0;
 	free_struct->threads = 0;
+	return (free_struct);
 }
 t_simulation	*simulation_init(t_parsing *pars_struct)
 {

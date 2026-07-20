@@ -36,8 +36,10 @@ int	main(int argc, char **argv)
 	}
 	if (simulation_start(sim_struct) != 0)
 	{
-		// free_everything(sim_struct, sim_struct->free_struct);
+		free_everything(sim_struct, sim_struct->free_struct);
 	}
+	else
+		free_everything(sim_struct, sim_struct->free_struct);
 }
 
 void	coders_print(t_coder coder)
