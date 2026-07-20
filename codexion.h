@@ -9,9 +9,16 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+typedef struct s_free
+{
+	int				threads;
+	int				mutex;
+	int				cond;
+}					t_free;
+
 typedef struct s_dongle
 {
-	pthread_mutex_t	lock;
+	pthread_mutex_t	dongle_lock;
 	pthread_cond_t	cond;
 	int				dongle_id;
 	long long		last_comp_t;
@@ -54,11 +61,13 @@ typedef struct s_parsing
 
 typedef struct s_simulation
 {
-	pthread_mutex_t	lock;
+	pthread_mutex_t	stop_lock;
+	pthread_mutex_t	log_lock;
 	int				stop_simulation;
 	t_coder			*coder_array;
 	t_dongle		*dongle_array;
 	t_parsing		*pars_struct;
+	t_free			*free_struct;
 	long long		start_time;
 }					t_simulation;
 
@@ -74,7 +83,6 @@ t_coder				ft_new_coder(int coder_id);
 t_dongle			ft_new_dongle(int dongle_id);
 
 void				free_sim(t_simulation *sim_struct);
-int					free_mutex(t_simulation *sim_struct, int counter);
-int					free_cond(t_simulation *sim_struct, int counter);
-void				ft_end_thread(int counter, t_simulation *sim_struct);
+void				free_everything(t_simulation *sim_struct,
+						t_free *free_struct);
 #endif

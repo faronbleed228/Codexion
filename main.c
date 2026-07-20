@@ -36,10 +36,7 @@ int	main(int argc, char **argv)
 	}
 	if (simulation_start(sim_struct) != 0)
 	{
-		ft_end_thread(pars_struct->coders, sim_struct);
-		free_mutex(sim_struct, pars_struct->coders);
-		free_cond(sim_struct, pars_struct->coders);
-		free_sim(sim_struct);
+		// free_everything(sim_struct, sim_struct->free_struct);
 	}
 }
 

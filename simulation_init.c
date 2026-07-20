@@ -50,6 +50,17 @@ static t_coder	*coders_array(int coders_n)
 	return (coder_array);
 }
 
+t_free	*free_init(void)
+{
+	t_free	*free_struct;
+
+	free_struct = malloc(sizeof(t_free));
+	if (!free_struct)
+		return (NULL);
+	free_struct->cond = 0;
+	free_struct->mutex = 0;
+	free_struct->threads = 0;
+}
 t_simulation	*simulation_init(t_parsing *pars_struct)
 {
 	t_simulation	*sim_struct;
@@ -60,10 +71,11 @@ t_simulation	*simulation_init(t_parsing *pars_struct)
 		free(pars_struct);
 		return (NULL);
 	}
+	sim_struct->free_struct = free_init();
 	sim_struct->coder_array = coders_array(pars_struct->coders);
 	sim_struct->dongle_array = dongle_init(pars_struct->coders);
 	sim_struct->pars_struct = pars_struct;
-	if (!sim_struct->coder_array | !sim_struct->dongle_array)
+	if (!sim_struct->coder_array | !sim_struct->dongle_array | !sim_struct->free_struct)
 	{
 		free_sim(sim_struct);
 		return (NULL);
