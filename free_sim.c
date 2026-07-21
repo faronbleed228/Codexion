@@ -23,13 +23,16 @@ void	free_everything(t_simulation *sim_struct, t_free *free_struct)
 	i = 0;
 	while (free_struct->cond > i)
 		pthread_cond_destroy(&sim_struct->dongle_array[i++].cond);
-	if (free_struct->mutex-- != 0)
+	if (free_struct->sim_mutex-- != 0)
 		pthread_mutex_destroy(&sim_struct->stop_lock);
-	if (free_struct->mutex-- != 0)
+	if (free_struct->sim_mutex-- != 0)
 		pthread_mutex_destroy(&sim_struct->log_lock);
 	i = 0;
-	while (free_struct->mutex > i)
+	while (free_struct->dongle_mutex > i)
 		pthread_mutex_destroy(&sim_struct->dongle_array[i++].dongle_lock);
+	i = 0;
+	while (free_struct->coder_mutex > i)
+		pthread_mutex_destroy(&sim_struct->coder_array[i++].coder_mutex);
 	free_sim(sim_struct);
 }
 

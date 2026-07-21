@@ -1,15 +1,9 @@
 #include "codexion.h"
 
-static int	mutex_cond_init(t_simulation *sim_struct)
+static int	cond_init(t_simulation *sim_struct)
 {
 	int	i;
 
-	if (pthread_mutex_init(&sim_struct->stop_lock, NULL) != 0)
-		return (0);
-	sim_struct->free_struct->mutex++;
-	if (pthread_mutex_init(&sim_struct->log_lock, NULL) != 0)
-		return (0);
-	sim_struct->free_struct->mutex++;
 	i = 0;
 	while (i < sim_struct->pars_struct->coders)
 	{
@@ -17,13 +11,30 @@ static int	mutex_cond_init(t_simulation *sim_struct)
 			return (0);
 		sim_struct->free_struct->cond++;
 	}
+	return (1);
+}
+
+static int	mutex_init(t_simulation *sim_struct)
+{
+	int	i;
+
+	if (pthread_mutex_init(&sim_struct->stop_lock, NULL) != 0)
+		return (0);
+	sim_struct->free_struct->sim_mutex++;
+	if (pthread_mutex_init(&sim_struct->log_lock, NULL) != 0)
+		return (0);
+	sim_struct->free_struct->sim_mutex++;
 	i = 0;
 	while (i < sim_struct->pars_struct->coders)
 	{
-		if (pthread_mutex_init(&sim_struct->dongle_array[i++].dongle_lock,
+		if (pthread_mutex_init(&sim_struct->dongle_array[i].dongle_lock,
 				NULL) != 0)
 			return (0);
-		sim_struct->free_struct->mutex++;
+		sim_struct->free_struct->dongle_mutex++;
+		if (pthread_mutex_init(&sim_struct->coder_array[i++].coder_mutex,
+				NULL) != 0)
+			return (0);
+		sim_struct->free_struct->coder_mutex++;
 	}
 	return (1);
 }

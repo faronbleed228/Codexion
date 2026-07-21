@@ -58,7 +58,9 @@ t_free	*free_init(void)
 	if (!free_struct)
 		return (NULL);
 	free_struct->cond = 0;
-	free_struct->mutex = 0;
+	free_struct->coder_mutex = 0;
+	free_struct->sim_mutex = 0;
+	free_struct->dongle_mutex = 0;
 	free_struct->threads = 0;
 	return (free_struct);
 }

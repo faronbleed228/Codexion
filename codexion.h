@@ -14,7 +14,9 @@ typedef struct s_simulation	t_simulation;
 typedef struct s_free
 {
 	int						threads;
-	int						mutex;
+	int						coder_mutex;
+	int						sim_mutex;
+	int						dongle_mutex;
 	int						cond;
 }							t_free;
 
