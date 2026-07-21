@@ -8,7 +8,7 @@ t_coder	ft_new_coder(int coder_id, t_simulation *sim_struct)
 	s_ptr.right_dongle = NULL;
 	s_ptr.left_dongle = NULL;
 	s_ptr.cur_status = WAITING;
-	s_ptr.last_comp_time = 0;
+	s_ptr.last_comp_time = sim_struct->start_time;
 	s_ptr.n_compiles = 0;
 	s_ptr.sim_struct = sim_struct;
 	return (s_ptr);

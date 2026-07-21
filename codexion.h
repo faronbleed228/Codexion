@@ -40,6 +40,7 @@ typedef enum e_status
 
 typedef struct s_coder
 {
+	pthread_mutex_t			coder_mutex;
 	int						cod_num;
 	long long				last_comp_time;
 	int						n_compiles;
