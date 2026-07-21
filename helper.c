@@ -7,7 +7,7 @@ int	ft_isdigit(int c)
 	return (0);
 }
 
-long long	get_cur_time_ns(struct timeval tv)
+long long	get_cur_time_ms(struct timeval tv)
 {
 	long long	time_ms;
 
@@ -44,7 +44,7 @@ void	log_output(t_coder *coder, status message)
 					"is refactoring", "has taken a dongle", "burned out"};
 
 	gettimeofday(&tv, NULL);
-	cur_time = get_cur_time_ns(tv) - coder->sim_struct->start_time;
+	cur_time = get_cur_time_ms(tv) - coder->sim_struct->start_time;
 	pthread_mutex_lock(&coder->sim_struct->log_lock);
 	printf("%lli %i %s\n", cur_time, coder->cod_num, messages[message]);
 	pthread_mutex_unlock(&coder->sim_struct->log_lock);

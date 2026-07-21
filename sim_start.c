@@ -48,6 +48,8 @@ void	*coder_routine(void *coder)
 	cur_coder = coder;
 	while (i < 4)
 	{
+		if (cur_coder->sim_struct->stop_simulation == 1)
+			return (NULL);
 		if (cur_coder->cod_num % 2 == 0)
 		{
 			take_dongle(cur_coder, cur_coder->left_dongle);
@@ -58,16 +60,24 @@ void	*coder_routine(void *coder)
 			take_dongle(cur_coder, cur_coder->right_dongle);
 			take_dongle(cur_coder, cur_coder->left_dongle);
 		}
+		coder_compiling(cur_coder);
+		if (cur_coder->sim_struct->stop_simulation == 1)
+			return (NULL);
 		log_output(cur_coder, COMPILING);
-		usleep(cur_coder->sim_struct->pars_struct->t_to_copm);
+		usleep(cur_coder->sim_struct->pars_struct->t_to_copm * 1000);
 		leave_dongle(cur_coder->left_dongle);
 		leave_dongle(cur_coder->right_dongle);
+		if (cur_coder->sim_struct->stop_simulation == 1)
+			return (NULL);
 		log_output(cur_coder, DEBUGGING);
-		usleep(cur_coder->sim_struct->pars_struct->t_to_debug);
+		usleep(cur_coder->sim_struct->pars_struct->t_to_debug * 1000);
+		if (cur_coder->sim_struct->stop_simulation == 1)
+			return (NULL);
 		log_output(cur_coder, REFACTORING);
-		usleep(cur_coder->sim_struct->pars_struct->t_to_refac);
+		usleep(cur_coder->sim_struct->pars_struct->t_to_refac * 1000);
 		i++;
 	}
+	return (NULL);
 }
 
 static int	thread_init(t_simulation *sim_struct)
@@ -81,14 +91,20 @@ static int	thread_init(t_simulation *sim_struct)
 				&coder_routine, (void *)&sim_struct->coder_array[i]) != 0)
 			return (0);
 		i++;
-		sim_struct->free_struct->threads++;
+		sim_struct->free_struct->coder_thread++;
 	}
+	if (pthread_create(&sim_struct->thread_id, NULL, &monitor,
+			(void *)sim_struct) != 0)
+		return (0);
+	sim_struct->free_struct->sim_thread++;
 	return (1);
 }
 
 int	simulation_start(t_simulation *sim_struct)
 {
-	if (mutex_cond_init(sim_struct) == 0)
+	if (cond_init(sim_struct) == 0)
+		return (0);
+	if (mutex_init(sim_struct) == 0)
 		return (0);
 	if (thread_init(sim_struct) == 0)
 		return (0);

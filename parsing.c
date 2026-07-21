@@ -90,6 +90,6 @@ t_parsing	*parsing(char **argv)
 	pars_struck->copm_req = atoi(argv[6]);
 	pars_struck->cooldown = atoi(argv[7]);
 	pars_struck->scheduler = argv[8];
-	pars_struck->start_time = get_cur_time_ns(tv);
+	pars_struck->start_time = get_cur_time_ms(tv);
 	return (pars_struck);
 }

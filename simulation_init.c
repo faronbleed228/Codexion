@@ -1,6 +1,6 @@
 #include "codexion.h"
 
-static t_dongle	*dongle_init(int coders_n)
+static t_dongle	*dongle_init(int coders_n, t_simulation *sim_struct)
 {
 	int			i;
 	t_dongle	*dongle_array;
@@ -11,7 +11,7 @@ static t_dongle	*dongle_init(int coders_n)
 		return (NULL);
 	while (i <= coders_n)
 	{
-		dongle_array[i - 1] = ft_new_dongle(i);
+		dongle_array[i - 1] = ft_new_dongle(i, sim_struct);
 		i++;
 	}
 	return (dongle_array);
@@ -61,7 +61,8 @@ t_free	*free_init(void)
 	free_struct->coder_mutex = 0;
 	free_struct->sim_mutex = 0;
 	free_struct->dongle_mutex = 0;
-	free_struct->threads = 0;
+	free_struct->coder_thread = 0;
+	free_struct->sim_thread = 0;
 	return (free_struct);
 }
 t_simulation	*simulation_init(t_parsing *pars_struct)
@@ -74,17 +75,17 @@ t_simulation	*simulation_init(t_parsing *pars_struct)
 		free(pars_struct);
 		return (NULL);
 	}
+	sim_struct->start_time = pars_struct->start_time;
+	sim_struct->stop_simulation = 0;
 	sim_struct->free_struct = free_init();
 	sim_struct->coder_array = coders_array(pars_struct->coders, sim_struct);
-	sim_struct->dongle_array = dongle_init(pars_struct->coders);
+	sim_struct->dongle_array = dongle_init(pars_struct->coders, sim_struct);
 	sim_struct->pars_struct = pars_struct;
 	if (!sim_struct->coder_array | !sim_struct->dongle_array | !sim_struct->free_struct)
 	{
 		free_sim(sim_struct);
 		return (NULL);
 	}
-	sim_struct->start_time = pars_struct->start_time;
-	sim_struct->stop_simulation = 0;
 	dongle_to_coders(sim_struct->dongle_array, sim_struct->coder_array,
 		pars_struct->coders);
 	return (sim_struct);

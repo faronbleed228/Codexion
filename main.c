@@ -27,6 +27,7 @@ int	main(int argc, char **argv)
 		fprintf(stderr, "Coders Error");
 		return (1);
 	}
+	printf("Simulation start time %lli\n", sim_struct->start_time);
 	i = 0;
 	while (i < pars_struct->coders)
 	{
@@ -36,15 +37,15 @@ int	main(int argc, char **argv)
 	}
 	if (simulation_start(sim_struct) == 0)
 	{
+		stop_sim(sim_struct, NULL);
 		join_threads(sim_struct, sim_struct->free_struct);
 		free_everything(sim_struct, sim_struct->free_struct);
+		return (1);
 	}
-	else
-	{
-		join_threads(sim_struct, sim_struct->free_struct);
-		printf("%i\n", sim_struct->pars_struct->copm_req);
-		free_everything(sim_struct, sim_struct->free_struct);
-	}
+	while (sim_struct->stop_simulation == 0)
+		usleep(1000);
+	join_threads(sim_struct, sim_struct->free_struct);
+	free_everything(sim_struct, sim_struct->free_struct);
 }
 
 void	coders_print(t_coder coder)
@@ -66,5 +67,6 @@ void	parsing_print(t_parsing *pars_struct)
 	printf("Time to refactor: %lli\n", pars_struct->t_to_refac);
 	printf("Comp required: %i\n", pars_struct->copm_req);
 	printf("Cooldown time: %lli\n", pars_struct->cooldown);
+	printf("Start time: %lli\n", pars_struct->start_time);
 	printf("Scheduler: %s\n\n", pars_struct->scheduler);
 }

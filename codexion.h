@@ -13,7 +13,8 @@ typedef struct s_simulation	t_simulation;
 
 typedef struct s_free
 {
-	int						threads;
+	int						coder_thread;
+	int						sim_thread;
 	int						coder_mutex;
 	int						sim_mutex;
 	int						dongle_mutex;
@@ -25,7 +26,7 @@ typedef struct s_dongle
 	pthread_mutex_t			dongle_lock;
 	pthread_cond_t			cond;
 	int						dongle_id;
-	long long				last_comp_t;
+	long long				last_used_t;
 	bool					is_taken;
 }							t_dongle;
 
@@ -69,6 +70,7 @@ typedef struct s_parsing
 
 typedef struct s_simulation
 {
+	pthread_t				thread_id;
 	pthread_mutex_t			stop_lock;
 	pthread_mutex_t			log_lock;
 	int						stop_simulation;
@@ -83,18 +85,22 @@ int							simulation_start(t_simulation *sim_struct);
 void						take_dongle(t_coder *coder,
 								t_dongle *dongle_struct);
 void						leave_dongle(t_dongle *dongle_struct);
+void						coder_compiling(t_coder *coder);
+void						*monitor(void *void_struct);
+void						stop_sim(t_simulation *sim_struct, t_coder *coder);
 
 t_parsing					*parsing(char **argv);
 t_simulation				*simulation_init(t_parsing *pars_struct);
 
 int							ft_isdigit(int c);
-long long					get_cur_time_ns(struct timeval tv);
+long long					get_cur_time_ms(struct timeval tv);
 struct timespec				get_absolute_time(long long waiting);
 void						log_output(t_coder *coder, status message);
 
 t_coder						ft_new_coder(int coder_id,
 								t_simulation *sim_struct);
-t_dongle					ft_new_dongle(int dongle_id);
+t_dongle					ft_new_dongle(int dongle_id,
+								t_simulation *sim_struct);
 
 void						free_sim(t_simulation *sim_struct);
 void						free_everything(t_simulation *sim_struct,
