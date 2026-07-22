@@ -1,6 +1,6 @@
 #include "codexion.h"
 
-void	stop_sim(t_simulation *sim_struct, t_coder *coder)
+void	*stop_sim(t_simulation *sim_struct, t_coder *coder)
 {
 	int	i;
 
@@ -15,6 +15,7 @@ void	stop_sim(t_simulation *sim_struct, t_coder *coder)
 		pthread_cond_broadcast(&sim_struct->dongle_array[i].cond);
 		i++;
 	}
+	return (NULL);
 }
 
 void	take_dongle(t_coder *coder, t_dongle *dongle_struct)
@@ -60,37 +61,17 @@ void	leave_dongle(t_dongle *dongle_struct)
 
 void	*monitor(void *void_struct)
 {
-	int				i;
-	long long		cur_time;
 	t_simulation	*sim_struct;
-	struct timeval	tv;
-	long long		last_copm_time;
+	t_coder			*burned_coder;
 
 	sim_struct = void_struct;
-	i = 0;
 	while (true)
 	{
-		i = 0;
-		while (i < sim_struct->pars_struct->coders)
-		{
-			pthread_mutex_lock(&sim_struct->coder_array[i].coder_mutex);
-			gettimeofday(&tv, NULL);
-			cur_time = get_cur_time_ms(tv);
-			last_copm_time = sim_struct->coder_array[i].last_comp_time;
-			// printf("Current time: %lli\n", cur_time);
-			// printf("Last comp time: %lli\n", last_copm_time);
-			// printf("Time to burn: %lli\n",
-			// sim_struct->pars_struct->t_to_burn);
-			// printf("Cosder: %i\n", i);
-			if (cur_time - last_copm_time >= sim_struct->pars_struct->t_to_burn)
-			{
-				stop_sim(sim_struct, &sim_struct->coder_array[i]);
-				pthread_mutex_unlock(&sim_struct->coder_array[i].coder_mutex);
-				return (NULL);
-			}
-			pthread_mutex_unlock(&sim_struct->coder_array[i].coder_mutex);
-			i++;
-		}
+		if (check_compiles(sim_struct) == 1)
+			return (stop_sim(sim_struct, NULL));
+		burned_coder = check_burnout(sim_struct);
+		if (burned_coder != NULL)
+			return (stop_sim(sim_struct, burned_coder));
 	}
 }
 

@@ -42,24 +42,13 @@ static int	mutex_init(t_simulation *sim_struct)
 void	*coder_routine(void *coder)
 {
 	t_coder	*cur_coder;
-	int		i;
 
-	i = 0;
 	cur_coder = coder;
-	while (i < 4)
+	while (cur_coder->n_compiles < cur_coder->sim_struct->pars_struct->copm_req)
 	{
 		if (cur_coder->sim_struct->stop_simulation == 1)
 			return (NULL);
-		if (cur_coder->cod_num % 2 == 0)
-		{
-			take_dongle(cur_coder, cur_coder->left_dongle);
-			take_dongle(cur_coder, cur_coder->right_dongle);
-		}
-		else if (cur_coder->cod_num % 2 != 0)
-		{
-			take_dongle(cur_coder, cur_coder->right_dongle);
-			take_dongle(cur_coder, cur_coder->left_dongle);
-		}
+		choose_dongle(cur_coder);
 		coder_compiling(cur_coder);
 		if (cur_coder->sim_struct->stop_simulation == 1)
 			return (NULL);
@@ -75,7 +64,6 @@ void	*coder_routine(void *coder)
 			return (NULL);
 		log_output(cur_coder, REFACTORING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_refac * 1000);
-		i++;
 	}
 	return (NULL);
 }

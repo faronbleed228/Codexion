@@ -82,12 +82,15 @@ typedef struct s_simulation
 }							t_simulation;
 
 int							simulation_start(t_simulation *sim_struct);
+void						choose_dongle(t_coder *cur_coder);
 void						take_dongle(t_coder *coder,
 								t_dongle *dongle_struct);
 void						leave_dongle(t_dongle *dongle_struct);
 void						coder_compiling(t_coder *coder);
 void						*monitor(void *void_struct);
-void						stop_sim(t_simulation *sim_struct, t_coder *coder);
+int							check_compiles(t_simulation *sim_struct);
+void						*stop_sim(t_simulation *sim_struct, t_coder *coder);
+t_coder						*check_burnout(t_simulation *sim_struct);
 
 t_parsing					*parsing(char **argv);
 t_simulation				*simulation_init(t_parsing *pars_struct);
