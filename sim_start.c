@@ -24,6 +24,9 @@ static int	mutex_init(t_simulation *sim_struct)
 	if (pthread_mutex_init(&sim_struct->log_lock, NULL) != 0)
 		return (0);
 	sim_struct->free_struct->sim_mutex++;
+	if (pthread_mutex_init(&sim_struct->queue_struct->queue_lock, NULL) != 0)
+		return (0);
+	sim_struct->free_struct->queue_mutex++;
 	i = 0;
 	while (i < sim_struct->pars_struct->coders)
 	{

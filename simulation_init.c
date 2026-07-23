@@ -63,6 +63,7 @@ t_free	*free_init(void)
 	free_struct->dongle_mutex = 0;
 	free_struct->coder_thread = 0;
 	free_struct->sim_thread = 0;
+	free_struct->queue_mutex = 0;
 	return (free_struct);
 }
 t_simulation	*simulation_init(t_parsing *pars_struct)
@@ -80,8 +81,9 @@ t_simulation	*simulation_init(t_parsing *pars_struct)
 	sim_struct->free_struct = free_init();
 	sim_struct->coder_array = coders_array(pars_struct->coders, sim_struct);
 	sim_struct->dongle_array = dongle_init(pars_struct->coders, sim_struct);
+	sim_struct->queue_struct = queue_init(sim_struct);
 	sim_struct->pars_struct = pars_struct;
-	if (!sim_struct->coder_array | !sim_struct->dongle_array | !sim_struct->free_struct)
+	if (!sim_struct->coder_array | !sim_struct->dongle_array | !sim_struct->free_struct | !sim_struct->queue_struct)
 	{
 		free_sim(sim_struct);
 		return (NULL);

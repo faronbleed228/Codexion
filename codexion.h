@@ -10,6 +10,17 @@
 # include <unistd.h>
 
 typedef struct s_simulation	t_simulation;
+typedef struct s_coder		t_coder;
+
+typedef struct s_queue
+{
+	t_coder					**queue;
+	int						head;
+	int						capacity;
+	int						tail;
+	int						count;
+	pthread_mutex_t			queue_lock;
+}							t_queue;
 
 typedef struct s_free
 {
@@ -19,6 +30,7 @@ typedef struct s_free
 	int						sim_mutex;
 	int						dongle_mutex;
 	int						cond;
+	int						queue_mutex;
 }							t_free;
 
 typedef struct s_dongle
@@ -78,6 +90,7 @@ typedef struct s_simulation
 	t_dongle				*dongle_array;
 	t_parsing				*pars_struct;
 	t_free					*free_struct;
+	t_queue					*queue_struct;
 	long long				start_time;
 }							t_simulation;
 
@@ -112,4 +125,5 @@ void						free_everything(t_simulation *sim_struct,
 void						join_threads(t_simulation *sim_struct,
 								t_free *free_struct);
 
+t_queue						*queue_init(t_simulation *sim_struct);
 #endif
