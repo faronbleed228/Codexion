@@ -43,7 +43,6 @@ void	join_threads(t_simulation *sim_struct, t_free *free_struct)
 	i = 0;
 	while (i < free_struct->coder_thread)
 	{
-		printf("%i\n", free_struct->coder_thread);
 		pthread_join(sim_struct->coder_array[i].thread_id, NULL);
 		i++;
 	}

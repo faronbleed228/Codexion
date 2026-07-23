@@ -54,3 +54,16 @@ t_coder	*check_burnout(t_simulation *sim_struct)
 	}
 	return (NULL);
 }
+
+bool	check_simulation(t_simulation *sim_struct)
+{
+	bool	sim_status;
+
+	pthread_mutex_lock(&sim_struct->stop_lock);
+	if (sim_struct->stop_simulation == 1)
+		sim_status = false;
+	else
+		sim_status = true;
+	pthread_mutex_unlock(&sim_struct->stop_lock);
+	return (sim_status);
+}

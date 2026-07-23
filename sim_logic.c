@@ -12,7 +12,9 @@ void	*stop_sim(t_simulation *sim_struct, t_coder *coder)
 	i = 0;
 	while (i < sim_struct->pars_struct->coders)
 	{
+		pthread_mutex_lock(&sim_struct->dongle_array[i].dongle_lock);
 		pthread_cond_broadcast(&sim_struct->dongle_array[i].cond);
+		pthread_mutex_unlock(&sim_struct->dongle_array[i].dongle_lock);
 		i++;
 	}
 	return (NULL);
@@ -30,7 +32,7 @@ void	take_dongle(t_coder *coder, t_dongle *dongle_struct)
 	while ((dongle_struct->is_taken == true || dongle_struct->last_used_t
 			+ cooldown < get_cur_time_ms(tv)))
 	{
-		if (coder->sim_struct->stop_simulation == 1)
+		if (check_simulation(coder->sim_struct) == false)
 		{
 			pthread_mutex_unlock(&dongle_struct->dongle_lock);
 			return ;
@@ -42,7 +44,7 @@ void	take_dongle(t_coder *coder, t_dongle *dongle_struct)
 	}
 	dongle_struct->is_taken = true;
 	pthread_mutex_unlock(&dongle_struct->dongle_lock);
-	if (coder->sim_struct->stop_simulation == 1)
+	if (check_simulation(coder->sim_struct) == false)
 		return ;
 	log_output(coder, TOOK_DONGLE);
 }
@@ -55,8 +57,8 @@ void	leave_dongle(t_dongle *dongle_struct)
 	gettimeofday(&tv, NULL);
 	dongle_struct->is_taken = false;
 	dongle_struct->last_used_t = get_cur_time_ms(tv);
-	pthread_mutex_unlock(&dongle_struct->dongle_lock);
 	pthread_cond_broadcast(&dongle_struct->cond);
+	pthread_mutex_unlock(&dongle_struct->dongle_lock);
 }
 
 void	*monitor(void *void_struct)

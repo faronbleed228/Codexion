@@ -91,6 +91,7 @@ void						*monitor(void *void_struct);
 int							check_compiles(t_simulation *sim_struct);
 void						*stop_sim(t_simulation *sim_struct, t_coder *coder);
 t_coder						*check_burnout(t_simulation *sim_struct);
+bool						check_simulation(t_simulation *sim_struct);
 
 t_parsing					*parsing(char **argv);
 t_simulation				*simulation_init(t_parsing *pars_struct);

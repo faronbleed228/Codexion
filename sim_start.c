@@ -46,21 +46,21 @@ void	*coder_routine(void *coder)
 	cur_coder = coder;
 	while (cur_coder->n_compiles < cur_coder->sim_struct->pars_struct->copm_req)
 	{
-		if (cur_coder->sim_struct->stop_simulation == 1)
+		if (check_simulation(cur_coder->sim_struct) == false)
 			return (NULL);
 		choose_dongle(cur_coder);
 		coder_compiling(cur_coder);
-		if (cur_coder->sim_struct->stop_simulation == 1)
+		if (check_simulation(cur_coder->sim_struct) == false)
 			return (NULL);
 		log_output(cur_coder, COMPILING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_copm * 1000);
 		leave_dongle(cur_coder->left_dongle);
 		leave_dongle(cur_coder->right_dongle);
-		if (cur_coder->sim_struct->stop_simulation == 1)
+		if (check_simulation(cur_coder->sim_struct) == false)
 			return (NULL);
 		log_output(cur_coder, DEBUGGING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_debug * 1000);
-		if (cur_coder->sim_struct->stop_simulation == 1)
+		if (check_simulation(cur_coder->sim_struct) == false)
 			return (NULL);
 		log_output(cur_coder, REFACTORING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_refac * 1000);
