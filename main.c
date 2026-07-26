@@ -29,12 +29,6 @@ int	main(int argc, char **argv)
 	}
 	// printf("Simulation start time %lli\n", sim_struct->start_time);
 	i = 0;
-	while (i < pars_struct->coders)
-	{
-		// coders_print(sim_struct->coder_array[i]);
-		// printf("\n");
-		i++;
-	}
 	if (simulation_start(sim_struct) == 0)
 	{
 		stop_sim(sim_struct, NULL);
@@ -43,6 +37,12 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	join_threads(sim_struct, sim_struct->free_struct);
+	/*while (i < pars_struct->coders)
+	{
+		coders_print(sim_struct->coder_array[i]);
+		printf("\n");
+		i++;
+	}*/
 	free_everything(sim_struct, sim_struct->free_struct);
 }
 
@@ -50,7 +50,7 @@ void	coders_print(t_coder coder)
 {
 	printf("Coder NUMBER:%i\n", coder.cod_num);
 	printf("Current status: %i\n", coder.cur_status);
-	printf("Last comp time: %lli\n", coder.last_comp_time);
+	// printf("Last comp time: %lli\n", coder.n_compiles);
 	printf("Left dongle Id: %i\n", coder.left_dongle->dongle_id);
 	printf("Right dongle id: %i\n", coder.right_dongle->dongle_id);
 	//("Number of compiles: %i\n", coder.n_compiles);

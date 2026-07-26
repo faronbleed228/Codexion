@@ -54,8 +54,8 @@ void	*coder_routine(void *coder)
 			return (NULL);
 		log_output(cur_coder, COMPILING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_copm * 1000);
-		leave_dongle(cur_coder->left_dongle);
-		leave_dongle(cur_coder->right_dongle);
+		leave_dongle(cur_coder->left_dongle, cur_coder);
+		leave_dongle(cur_coder->right_dongle, cur_coder);
 		if (check_simulation(cur_coder->sim_struct) == false)
 			return (NULL);
 		log_output(cur_coder, DEBUGGING);

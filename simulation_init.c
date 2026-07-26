@@ -35,7 +35,6 @@ static void	dongle_to_coders(t_dongle *dongle_array, t_coder *coder_array,
 static t_coder	*coders_array(int coders_n, t_simulation *sim_struct)
 {
 	t_coder	*coder_array;
-	t_coder	*coder;
 	int		i;
 
 	coder_array = malloc(sizeof(t_coder) * coders_n);

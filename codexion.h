@@ -10,6 +10,7 @@
 # include <unistd.h>
 
 typedef struct s_simulation	t_simulation;
+typedef struct s_coder		t_coder;
 
 typedef struct s_free
 {
@@ -27,7 +28,10 @@ typedef struct s_dongle
 	pthread_cond_t			cond;
 	int						dongle_id;
 	long long				last_used_t;
+	int						queue_n;
 	bool					is_taken;
+	t_coder					*queue[2];
+	int						next_coder;
 }							t_dongle;
 
 typedef enum e_status
@@ -37,7 +41,8 @@ typedef enum e_status
 	REFACTORING = 2,
 	TOOK_DONGLE = 3,
 	BURNED_OUT = 4,
-	WAITING = 5,
+	NOT_WAITING = 5,
+	WAITING = 6
 
 }							status;
 
@@ -85,7 +90,8 @@ int							simulation_start(t_simulation *sim_struct);
 void						choose_dongle(t_coder *cur_coder);
 void						take_dongle(t_coder *coder,
 								t_dongle *dongle_struct);
-void						leave_dongle(t_dongle *dongle_struct);
+void						leave_dongle(t_dongle *dongle_struct,
+								t_coder *coder_struct);
 void						coder_compiling(t_coder *coder);
 void						*monitor(void *void_struct);
 int							check_compiles(t_simulation *sim_struct);
@@ -111,5 +117,10 @@ void						free_everything(t_simulation *sim_struct,
 								t_free *free_struct);
 void						join_threads(t_simulation *sim_struct,
 								t_free *free_struct);
+
+void						fifo_queue(t_dongle *dongle_struct);
+void						add_to_queue(t_dongle *dongle_struct,
+								t_coder *coder_struct);
+void						edf_queue(t_dongle *dongle_struct);
 
 #endif
