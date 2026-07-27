@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sim_start.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/27 16:31:06 by ypopovyc          #+#    #+#             */
+/*   Updated: 2026/07/27 22:29:25 by ypopovyc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static int	cond_init(t_simulation *sim_struct)
@@ -44,7 +56,7 @@ void	*coder_routine(void *coder)
 	t_coder	*cur_coder;
 
 	cur_coder = coder;
-	while (cur_coder->n_compiles < cur_coder->sim_struct->pars_struct->copm_req)
+	while (true) //cur_coder->n_compiles < cur_coder->sim_struct->pars_struct->copm_req
 	{
 		if (check_simulation(cur_coder->sim_struct) == false)
 			return (NULL);
@@ -54,8 +66,7 @@ void	*coder_routine(void *coder)
 			return (NULL);
 		log_output(cur_coder, COMPILING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_copm * 1000);
-		leave_dongle(cur_coder->left_dongle, cur_coder);
-		leave_dongle(cur_coder->right_dongle, cur_coder);
+		choose_leave_dongle(cur_coder);
 		if (check_simulation(cur_coder->sim_struct) == false)
 			return (NULL);
 		log_output(cur_coder, DEBUGGING);

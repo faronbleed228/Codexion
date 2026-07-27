@@ -1,10 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/27 16:31:14 by ypopovyc          #+#    #+#             */
+/*   Updated: 2026/07/27 16:35:49 by ypopovyc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 int	ft_check_int_len(char *str)
 {
-	char	str_max[10] = "2147483647";
+	char	*str_max;
 	int		i;
 
+	str_max = "2147483647";
 	i = 0;
 	if (strlen(&str[i]) > 10)
 		return (0);
@@ -53,7 +66,6 @@ int	ft_int_valid(char *str)
 int	validator(char **argv)
 {
 	int	i;
-	int	j;
 
 	i = 1;
 	while (i < 8)

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/27 16:35:59 by ypopovyc          #+#    #+#             */
+/*   Updated: 2026/07/27 20:41:50 by ypopovyc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CODEXION_H
 # define CODEXION_H
 
@@ -43,8 +55,7 @@ typedef enum e_status
 	BURNED_OUT = 4,
 	NOT_WAITING = 5,
 	WAITING = 6
-
-}							status;
+}							t_status;
 
 typedef struct s_coder
 {
@@ -54,7 +65,7 @@ typedef struct s_coder
 	int						n_compiles;
 	t_dongle				*left_dongle;
 	t_dongle				*right_dongle;
-	status					cur_status;
+	t_status				cur_status;
 	pthread_t				thread_id;
 	t_simulation			*sim_struct;
 
@@ -90,14 +101,18 @@ int							simulation_start(t_simulation *sim_struct);
 void						choose_dongle(t_coder *cur_coder);
 void						take_dongle(t_coder *coder,
 								t_dongle *dongle_struct);
-void						leave_dongle(t_dongle *dongle_struct,
-								t_coder *coder_struct);
+void						leave_dongle(t_coder *coder_struct,
+								t_dongle *dongle_struct);
 void						coder_compiling(t_coder *coder);
 void						*monitor(void *void_struct);
 int							check_compiles(t_simulation *sim_struct);
 void						*stop_sim(t_simulation *sim_struct, t_coder *coder);
 t_coder						*check_burnout(t_simulation *sim_struct);
 bool						check_simulation(t_simulation *sim_struct);
+void						delete_coder(t_dongle *dongle_struct);
+int							is_dongle_busy(t_dongle *dongle, t_coder *coder,
+								t_parsing *pars);
+void						choose_leave_dongle(t_coder *cur_coder);
 
 t_parsing					*parsing(char **argv);
 t_simulation				*simulation_init(t_parsing *pars_struct);
@@ -105,12 +120,11 @@ t_simulation				*simulation_init(t_parsing *pars_struct);
 int							ft_isdigit(int c);
 long long					get_cur_time_ms(struct timeval tv);
 struct timespec				get_absolute_time(long long waiting);
-void						log_output(t_coder *coder, status message);
+void						log_output(t_coder *coder, t_status message);
 
 t_coder						ft_new_coder(int coder_id,
 								t_simulation *sim_struct);
-t_dongle					ft_new_dongle(int dongle_id,
-								t_simulation *sim_struct);
+t_dongle					ft_new_dongle(int dongle_id);
 
 void						free_sim(t_simulation *sim_struct);
 void						free_everything(t_simulation *sim_struct,

@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   simulation_init.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/27 16:31:09 by ypopovyc          #+#    #+#             */
+/*   Updated: 2026/07/27 17:49:42 by ypopovyc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
-static t_dongle	*dongle_init(int coders_n, t_simulation *sim_struct)
+static t_dongle	*dongle_init(int coders_n)
 {
 	int			i;
 	t_dongle	*dongle_array;
@@ -11,7 +23,7 @@ static t_dongle	*dongle_init(int coders_n, t_simulation *sim_struct)
 		return (NULL);
 	while (i <= coders_n)
 	{
-		dongle_array[i - 1] = ft_new_dongle(i, sim_struct);
+		dongle_array[i - 1] = ft_new_dongle(i);
 		i++;
 	}
 	return (dongle_array);
@@ -32,6 +44,7 @@ static void	dongle_to_coders(t_dongle *dongle_array, t_coder *coder_array,
 		i++;
 	}
 }
+
 static t_coder	*coders_array(int coders_n, t_simulation *sim_struct)
 {
 	t_coder	*coder_array;
@@ -64,6 +77,7 @@ t_free	*free_init(void)
 	free_struct->sim_thread = 0;
 	return (free_struct);
 }
+
 t_simulation	*simulation_init(t_parsing *pars_struct)
 {
 	t_simulation	*sim_struct;
@@ -78,9 +92,10 @@ t_simulation	*simulation_init(t_parsing *pars_struct)
 	sim_struct->stop_simulation = 0;
 	sim_struct->free_struct = free_init();
 	sim_struct->coder_array = coders_array(pars_struct->coders, sim_struct);
-	sim_struct->dongle_array = dongle_init(pars_struct->coders, sim_struct);
+	sim_struct->dongle_array = dongle_init(pars_struct->coders);
 	sim_struct->pars_struct = pars_struct;
-	if (!sim_struct->coder_array | !sim_struct->dongle_array | !sim_struct->free_struct)
+	if (!sim_struct->coder_array || !sim_struct->dongle_array
+		|| !sim_struct->free_struct)
 	{
 		free_sim(sim_struct);
 		return (NULL);

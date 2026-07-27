@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sim_logic.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/27 16:31:04 by ypopovyc          #+#    #+#             */
+/*   Updated: 2026/07/27 22:38:36 by ypopovyc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 void	*stop_sim(t_simulation *sim_struct, t_coder *coder)
@@ -22,37 +34,27 @@ void	*stop_sim(t_simulation *sim_struct, t_coder *coder)
 
 void	take_dongle(t_coder *coder, t_dongle *dongle_struct)
 {
-	long long		cooldown;
 	struct timespec	ts;
-	struct timeval	tv;
 
-	cooldown = coder->sim_struct->pars_struct->cooldown;
 	pthread_mutex_lock(&dongle_struct->dongle_lock);
-	gettimeofday(&tv, NULL);
-	while (((dongle_struct->is_taken == true || dongle_struct->last_used_t
-				+ cooldown > get_cur_time_ms(tv)))
-		&& dongle_struct->next_coder != coder->cod_num)
+	add_to_queue(dongle_struct, coder);
+	while (is_dongle_busy(dongle_struct, coder, coder->sim_struct->pars_struct)
+		&& check_simulation(coder->sim_struct))
 	{
-		if (check_simulation(coder->sim_struct) == false)
-		{
-			pthread_mutex_unlock(&dongle_struct->dongle_lock);
-			return ;
-		}
-		if (coder->cur_status != WAITING)
-			add_to_queue(dongle_struct, coder);
-		ts = get_absolute_time(cooldown);
+		ts = get_absolute_time(coder->sim_struct->pars_struct->cooldown);
 		pthread_cond_timedwait(&dongle_struct->cond,
 			&dongle_struct->dongle_lock, &ts);
-		gettimeofday(&tv, NULL);
 	}
 	dongle_struct->is_taken = true;
+	delete_coder(dongle_struct);
+	dongle_struct->next_coder = -1;
 	pthread_mutex_unlock(&dongle_struct->dongle_lock);
 	if (check_simulation(coder->sim_struct) == false)
 		return ;
 	log_output(coder, TOOK_DONGLE);
 }
 
-void	leave_dongle(t_dongle *dongle_struct, t_coder *coder_struct)
+void	leave_dongle(t_coder *coder_struct, t_dongle *dongle_struct)
 {
 	struct timeval	tv;
 	char			*scheduler;
@@ -60,8 +62,8 @@ void	leave_dongle(t_dongle *dongle_struct, t_coder *coder_struct)
 	scheduler = coder_struct->sim_struct->pars_struct->scheduler;
 	pthread_mutex_lock(&dongle_struct->dongle_lock);
 	gettimeofday(&tv, NULL);
-	dongle_struct->is_taken = false;
 	dongle_struct->last_used_t = get_cur_time_ms(tv);
+	dongle_struct->is_taken = false;
 	if (dongle_struct->queue_n != 0 && strcmp(scheduler, "fifo") == 0)
 		fifo_queue(dongle_struct);
 	else if (dongle_struct->queue_n != 0 && strcmp(scheduler, "edf") == 0)
@@ -78,11 +80,12 @@ void	*monitor(void *void_struct)
 	sim_struct = void_struct;
 	while (true)
 	{
-		if (check_compiles(sim_struct) == 1)
-			return (stop_sim(sim_struct, NULL));
 		burned_coder = check_burnout(sim_struct);
 		if (burned_coder != NULL)
 			return (stop_sim(sim_struct, burned_coder));
+		if (check_compiles(sim_struct) == sim_struct->pars_struct->coders)
+			return (stop_sim(sim_struct, NULL));
+		usleep(30);
 	}
 }
 
@@ -92,7 +95,6 @@ void	coder_compiling(t_coder *coder)
 
 	pthread_mutex_lock(&coder->coder_mutex);
 	gettimeofday(&tv, NULL);
-	coder->cur_status = COMPILING;
 	coder->last_comp_time = get_cur_time_ms(tv);
 	coder->n_compiles++;
 	pthread_mutex_unlock(&coder->coder_mutex);
