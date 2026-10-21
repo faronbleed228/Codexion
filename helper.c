@@ -6,7 +6,7 @@
 /*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:31:28 by ypopovyc          #+#    #+#             */
-/*   Updated: 2026/07/27 16:41:08 by ypopovyc         ###   ########.fr       */
+/*   Updated: 2026/07/28 14:23:52 by ypopovyc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,21 @@ void	log_output(t_coder *coder, t_status message)
 	gettimeofday(&tv, NULL);
 	cur_time = get_cur_time_ms(tv) - coder->sim_struct->start_time;
 	pthread_mutex_lock(&coder->sim_struct->log_lock);
-	printf("%lli %i %s\n", cur_time, coder->cod_num, messages[message]);
+	fprintf(stdout, "%lli %i %s\n", cur_time, coder->cod_num,
+		messages[message]);
 	pthread_mutex_unlock(&coder->sim_struct->log_lock);
+}
+
+int	is_dongle_busy(t_dongle *dongle, t_coder *coder, t_parsing *pars)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	if (dongle->is_taken)
+		return (1);
+	if (get_cur_time_ms(tv) < dongle->last_used_t + pars->cooldown)
+		return (1);
+	if (dongle->next_coder != coder->cod_num && dongle->next_coder != -1)
+		return (1);
+	return (0);
 }

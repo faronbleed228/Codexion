@@ -6,7 +6,7 @@
 /*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:31:09 by ypopovyc          #+#    #+#             */
-/*   Updated: 2026/07/27 17:49:42 by ypopovyc         ###   ########.fr       */
+/*   Updated: 2026/07/28 11:50:29 by ypopovyc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ t_simulation	*simulation_init(t_parsing *pars_struct)
 	sim_struct = malloc(sizeof(t_simulation));
 	if (!sim_struct)
 	{
+		fprintf(stderr, "Coders Error\n");
 		free(pars_struct);
 		return (NULL);
 	}

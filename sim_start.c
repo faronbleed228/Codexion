@@ -6,7 +6,7 @@
 /*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:31:06 by ypopovyc          #+#    #+#             */
-/*   Updated: 2026/07/27 22:29:25 by ypopovyc         ###   ########.fr       */
+/*   Updated: 2026/07/28 14:32:34 by ypopovyc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,23 +56,24 @@ void	*coder_routine(void *coder)
 	t_coder	*cur_coder;
 
 	cur_coder = coder;
-	while (true) //cur_coder->n_compiles < cur_coder->sim_struct->pars_struct->copm_req
+	while ((check_simulation(cur_coder->sim_struct) == true))
 	{
-		if (check_simulation(cur_coder->sim_struct) == false)
-			return (NULL);
 		choose_dongle(cur_coder);
-		coder_compiling(cur_coder);
 		if (check_simulation(cur_coder->sim_struct) == false)
-			return (NULL);
-		log_output(cur_coder, COMPILING);
+		{
+			choose_leave_dongle(cur_coder);
+			break ;
+		}
+		coder_compiling(cur_coder);
+		log_output(coder, COMPILING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_copm * 1000);
 		choose_leave_dongle(cur_coder);
 		if (check_simulation(cur_coder->sim_struct) == false)
-			return (NULL);
+			break ;
 		log_output(cur_coder, DEBUGGING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_debug * 1000);
 		if (check_simulation(cur_coder->sim_struct) == false)
-			return (NULL);
+			break ;
 		log_output(cur_coder, REFACTORING);
 		usleep(cur_coder->sim_struct->pars_struct->t_to_refac * 1000);
 	}

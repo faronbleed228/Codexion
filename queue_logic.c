@@ -6,7 +6,7 @@
 /*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:31:11 by ypopovyc          #+#    #+#             */
-/*   Updated: 2026/07/27 22:26:49 by ypopovyc         ###   ########.fr       */
+/*   Updated: 2026/07/28 11:09:59 by ypopovyc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,8 @@ void	add_to_queue(t_dongle *dongle_struct, t_coder *coder_struct)
 
 void	fifo_queue(t_dongle *dongle_struct)
 {
-	if (dongle_struct->queue_n == 1)
-	{
+	if (dongle_struct->queue_n != -1)
 		dongle_struct->next_coder = dongle_struct->queue[0]->cod_num;
-	}
-	else if (dongle_struct->queue_n == 2)
-	{
-		dongle_struct->next_coder = dongle_struct->queue[0]->cod_num;
-	}
 	else
 		dongle_struct->next_coder = -1;
 }

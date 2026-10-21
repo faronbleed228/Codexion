@@ -6,7 +6,7 @@
 /*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:31:14 by ypopovyc          #+#    #+#             */
-/*   Updated: 2026/07/27 16:35:49 by ypopovyc         ###   ########.fr       */
+/*   Updated: 2026/07/28 11:52:02 by ypopovyc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,17 @@ int	validator(char **argv)
 		if (strlen(argv[i]) == 0)
 			return (0);
 		if (ft_int_valid(argv[i]) == 0)
+		{
+			fprintf(stderr, "Time SIZE Error\n");
 			return (0);
+		}
 		i++;
 	}
 	if (strcmp(argv[8], "fifo") != 0 && strcmp(argv[8], "edf") != 0)
+	{
+		fprintf(stderr, "SCHEDULER Error\n");
 		return (0);
+	}
 	return (1);
 }
 

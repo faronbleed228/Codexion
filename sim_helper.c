@@ -6,7 +6,7 @@
 /*   By: ypopovyc <@student.42vienna.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:30:59 by ypopovyc          #+#    #+#             */
-/*   Updated: 2026/07/27 22:39:40 by ypopovyc         ###   ########.fr       */
+/*   Updated: 2026/07/28 13:35:12 by ypopovyc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,6 @@ int	check_compiles(t_simulation *sim_struct)
 	total = sim_struct->pars_struct->copm_req;
 	while (i < sim_struct->pars_struct->coders)
 	{
-		printf("ID: %i,COMP: %i\n", sim_struct->coder_array[i].cod_num,
-			sim_struct->coder_array[i].n_compiles);
 		pthread_mutex_lock(&sim_struct->coder_array[i].coder_mutex);
 		if (sim_struct->coder_array[i].n_compiles >= total)
 		{
@@ -61,7 +59,6 @@ int	check_compiles(t_simulation *sim_struct)
 		pthread_mutex_unlock(&sim_struct->coder_array[i].coder_mutex);
 		i++;
 	}
-	printf("comped coders %i\n", j);
 	return (j);
 }
 
@@ -101,18 +98,4 @@ bool	check_simulation(t_simulation *sim_struct)
 		sim_status = true;
 	pthread_mutex_unlock(&sim_struct->stop_lock);
 	return (sim_status);
-}
-
-int	is_dongle_busy(t_dongle *dongle, t_coder *coder, t_parsing *pars)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	if (dongle->is_taken)
-		return (1);
-	if (get_cur_time_ms(tv) < dongle->last_used_t + pars->cooldown)
-		return (1);
-	if (dongle->next_coder != coder->cod_num && dongle->next_coder != -1)
-		return (1);
-	return (0);
 }
