@@ -31,20 +31,15 @@ struct timespec	get_absolute_time(long long waiting)
 {
 	struct timeval	tv;
 	struct timespec	ts;
-	long long		test;
 
 	gettimeofday(&tv, NULL);
-	ts.tv_sec = tv.tv_sec;
-	ts.tv_nsec = tv.tv_usec * 1000;
-	test = waiting * 1000000 + ts.tv_nsec;
-	if (test > 999999999)
+	ts.tv_sec = tv.tv_sec + waiting / 1000;
+	ts.tv_nsec = tv.tv_usec * 1000 + (waiting % 1000) * 1000000;
+	if (ts.tv_nsec >= 1000000000)
 	{
 		ts.tv_sec++;
-		test -= 1000000000;
-		ts.tv_nsec = test;
-		return (ts);
+		ts.tv_nsec -= 1000000000;
 	}
-	ts.tv_nsec = test;
 	return (ts);
 }
 

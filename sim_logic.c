@@ -23,6 +23,9 @@ void	*stop_sim(t_simulation *sim_struct, t_coder *coder)
 	while (i < sim_struct->pars_struct->coders)
 	{
 		pthread_mutex_lock(&sim_struct->dongle_array[i].dongle_lock);
+		sim_struct->dongle_array[i].queue_n = 0;
+		sim_struct->dongle_array[i].queue[0] = NULL;
+		sim_struct->dongle_array[i].queue[1] = NULL;
 		pthread_cond_broadcast(&sim_struct->dongle_array[i].cond);
 		pthread_mutex_unlock(&sim_struct->dongle_array[i].dongle_lock);
 		i++;
@@ -30,46 +33,6 @@ void	*stop_sim(t_simulation *sim_struct, t_coder *coder)
 	if (coder)
 		log_output(coder, BURNED_OUT);
 	return (NULL);
-}
-
-void	take_dongle(t_coder *coder, t_dongle *dongle_struct)
-{
-	struct timespec	ts;
-
-	pthread_mutex_lock(&dongle_struct->dongle_lock);
-	add_to_queue(dongle_struct, coder);
-	while (is_dongle_busy(dongle_struct, coder, coder->sim_struct->pars_struct)
-		&& check_simulation(coder->sim_struct))
-	{
-		ts = get_absolute_time(coder->sim_struct->pars_struct->cooldown);
-		pthread_cond_timedwait(&dongle_struct->cond,
-			&dongle_struct->dongle_lock, &ts);
-	}
-	dongle_struct->is_taken = true;
-	delete_coder(dongle_struct);
-	dongle_struct->next_coder = -1;
-	pthread_mutex_unlock(&dongle_struct->dongle_lock);
-	if (check_simulation(coder->sim_struct) == false)
-		return ;
-	log_output(coder, TOOK_DONGLE);
-}
-
-void	leave_dongle(t_coder *coder_struct, t_dongle *dongle_struct)
-{
-	struct timeval	tv;
-	char			*scheduler;
-
-	scheduler = coder_struct->sim_struct->pars_struct->scheduler;
-	pthread_mutex_lock(&dongle_struct->dongle_lock);
-	gettimeofday(&tv, NULL);
-	dongle_struct->last_used_t = get_cur_time_ms(tv);
-	dongle_struct->is_taken = false;
-	if (dongle_struct->queue_n != 0 && strcmp(scheduler, "fifo") == 0)
-		fifo_queue(dongle_struct);
-	else if (dongle_struct->queue_n != 0 && strcmp(scheduler, "edf") == 0)
-		edf_queue(dongle_struct);
-	pthread_cond_broadcast(&dongle_struct->cond);
-	pthread_mutex_unlock(&dongle_struct->dongle_lock);
 }
 
 void	*monitor(void *void_struct)

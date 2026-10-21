@@ -84,16 +84,16 @@ int	validator(char **argv)
 		fprintf(stderr, "SCHEDULER Error\n");
 		return (0);
 	}
+	if (atoi(argv[1]) == 0)
+		return (0);
 	return (1);
 }
 
 t_parsing	*parsing(char **argv)
 {
-	int				i;
 	t_parsing		*pars_struck;
 	struct timeval	tv;
 
-	i = 1;
 	if (validator(argv) == 0)
 		return (NULL);
 	pars_struck = malloc(sizeof(t_parsing));

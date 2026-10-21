@@ -35,9 +35,9 @@ void	free_everything(t_simulation *sim_struct, t_free *free_struct)
 	i = 0;
 	while (free_struct->cond > i)
 		pthread_cond_destroy(&sim_struct->dongle_array[i++].cond);
-	if (free_struct->sim_mutex-- != 0)
+	if (free_struct->sim_mutex >= 1)
 		pthread_mutex_destroy(&sim_struct->stop_lock);
-	if (free_struct->sim_mutex-- != 0)
+	if (free_struct->sim_mutex >= 2)
 		pthread_mutex_destroy(&sim_struct->log_lock);
 	i = 0;
 	while (free_struct->dongle_mutex > i)

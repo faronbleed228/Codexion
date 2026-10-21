@@ -33,6 +33,7 @@ t_dongle	ft_new_dongle(int dongle_id)
 	s_ptr.dongle_id = dongle_id;
 	s_ptr.last_used_t = 0;
 	s_ptr.is_taken = false;
+	s_ptr.owner = NULL;
 	s_ptr.queue_n = 0;
 	s_ptr.next_coder = -1;
 	s_ptr.queue[0] = NULL;

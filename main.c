@@ -19,7 +19,6 @@ static t_parsing	*parsing_validation(int argc, char **argv);
 int	main(int argc, char **argv)
 {
 	t_parsing		*pars_struct;
-	int				i;
 	t_simulation	*sim_struct;
 
 	if (argc != 9)
@@ -33,10 +32,10 @@ int	main(int argc, char **argv)
 	sim_struct = simulation_init(pars_struct);
 	if (!sim_struct)
 		return (1);
-	i = 0;
 	if (simulation_start(sim_struct) == 0)
 	{
-		stop_sim(sim_struct, NULL);
+		if (sim_struct->free_struct->coder_thread > 0)
+			stop_sim(sim_struct, NULL);
 		join_threads(sim_struct, sim_struct->free_struct);
 		free_everything(sim_struct, sim_struct->free_struct);
 		return (1);
