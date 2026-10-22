@@ -42,6 +42,7 @@ typedef struct s_dongle
 	long long				last_used_t;
 	int						queue_n;
 	bool					is_taken;
+	t_coder					*owner;
 	t_coder					*queue[2];
 	int						next_coder;
 }							t_dongle;

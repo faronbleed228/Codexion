@@ -10,7 +10,8 @@ SRCS		=	main.c \
 				sim_logic.c \
 				sim_start.c \
 				simulation_init.c \
-				queue_logic.c
+				queue_logic.c \
+				dongle_logic.c
 
 HEADERS_DIR	= .
 HEADERS		=	$(HEADERS_DIR)/codexion.h
@@ -46,3 +47,11 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
+
+test: all
+	@mkdir -p .tests
+	$(CC) $(CFLAGS) $(INCLUDES) tests/queue.c $(filter-out main.c,$(SRCS)) -o .tests/queue
+	./.tests/queue
+	python3 tests/check.py
+
+.PHONY: test

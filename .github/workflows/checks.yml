@@ -1,0 +1,22 @@
+name: C regression checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build and check
+        env:
+          CC: ${{ matrix.cc }}
+        run: |
+          make CC="${{ matrix.cc }}" re CFLAGS="-Wall -Wextra -Werror -pthread -g -fsanitize=address,undefined"
+          make CC="${{ matrix.cc }}" test CFLAGS="-Wall -Wextra -Werror -pthread -g -fsanitize=address,undefined"
